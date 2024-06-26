@@ -17,7 +17,7 @@ test_font = pygame.font.Font('Font/PixelType.ttf', 50)
 # define some surfaces including the environment, actors, and score
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-scor_surf = test_font.render('My game', False, 'Black')
+scor_surf = test_font.render('My game', False, (64, 64, 64))
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 
@@ -59,8 +59,8 @@ while True:
     screen.blit(snal_surf, snal_rect)
 
     # add a background to the score
-    pygame.draw.rect(screen, 'Pink', scor_rect)
-    pygame.draw.rect(screen, 'Pink', scor_rect, 10)
+    pygame.draw.rect(screen, '#c0e8ec', scor_rect)
+    pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
 
     # display the score surface on the screen surface
     screen.blit(scor_surf, scor_rect)
