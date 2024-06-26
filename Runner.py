@@ -14,16 +14,17 @@ screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
 test_font = pygame.font.Font('Font/PixelType.ttf', 50)
 
-# define some surfaces including the environment, actors, and text
+# define some surfaces including the environment, actors, and score
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-text_surf = test_font.render('My game', False, 'Black')
+scor_surf = test_font.render('My game', False, 'Black')
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 
-# define a rectangle hitbox for the player, and enemies
+# define a rectangle hitbox for the player, enemies, and menu items
 play_rect = play_surf.get_rect(midbottom = (80, 300))
 snal_rect = snal_surf.get_rect(bottomleft = (800, 300))
+scor_rect = scor_surf.get_rect(center = (400, 50))
 
 # main game loop
 while True:
@@ -57,9 +58,15 @@ while True:
     # display the snail on the screen surface
     screen.blit(snal_surf, snal_rect)
 
-    # display the text surface on the screen surface
-    screen.blit(text_surf, (300, 50))
+    # add a background to the score
+    pygame.draw.rect(screen, 'Pink', scor_rect)
+    pygame.draw.rect(screen, 'Pink', scor_rect, 10)
 
+    # display the score surface on the screen surface
+    screen.blit(scor_surf, scor_rect)
+
+    # if play_rect.colliderect(snal_rect):
+    #    pr
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
