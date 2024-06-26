@@ -16,6 +16,7 @@ sky_surf = pygame.image.load('Graphics/Enviroment/Sky.png')
 grnd_surf = pygame.image.load('Graphics/Enviroment/Ground.png')
 test_surf = pygame.Surface((100, 200))
 text_surf = test_font.render('My game', False, 'Black')
+snal_surf = pygame.image.load('Graphics/Enemies/Snail/Snail1.png')
 
 # display an opening screen and change the fill of the test surface to red
 pygame.display.set_caption('Runner')
@@ -36,11 +37,14 @@ while True:
     # display the ground surface on the screen surface
     screen.blit(grnd_surf, (0, 300))
 
-    # display the text surface on the screen surface
-    screen.blit(text_surf, (300, 50))
-
     # display the test surface on the screen surface
     screen.blit(test_surf, (200, 100))
+
+    # display the snail on the screen surface
+    screen.blit(snal_surf, (600, 275))
+
+    # display the text surface on the screen surface
+    screen.blit(text_surf, (300, 50))
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
