@@ -29,7 +29,7 @@ while True:
             pygame.quit()
             exit()
     
-    # display the skybox surface
+    # display the skybox surface on the screen surface
     screen.blit(sky_surf, (0, 0))
 
     # update the visual aspects of the game for each loop

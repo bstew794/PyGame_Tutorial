@@ -1,3 +1,4 @@
+
 # import necessary modules
 import pygame
 from sys import exit
@@ -8,6 +9,8 @@ pygame.init()
 # define some variables that will be used in the rest of the code including images, the clock, and surfaces
 screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
+sky_surf = pygame.image.load('Graphics/Enviroment/Sky.png')
+grnd_surf = pygame.image.load('Graphics/Enviroment/Ground.png')
 test_surface = pygame.Surface((100, 200))
 
 # display an opening screen and change the fill of the test surface to red
@@ -23,8 +26,14 @@ while True:
             pygame.quit()
             exit()
     
-    # display the test surface
-    screen.blit(test_surface, (200, 100))
+    # display the skybox surface on the screen surface
+    screen.blit(sky_surf, (0, 0))
+
+    # display the ground surface on the screen surface
+    screen.blit(grnd_surf, (0, 300))
+
+    # display the test surface on the skybox surface
+    sky_surf.blit(test_surface, (200, 100))
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
