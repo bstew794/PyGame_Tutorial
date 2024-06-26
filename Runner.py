@@ -26,6 +26,9 @@ play_rect = play_surf.get_rect(midbottom = (80, 300))
 snal_rect = snal_surf.get_rect(bottomleft = (800, 300))
 scor_rect = scor_surf.get_rect(center = (400, 50))
 
+# define player attributes
+play_grav = 0
+
 # main game loop
 while True:
     # check for user input events
@@ -34,6 +37,12 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            play_grav = -20
+
+        if event.type == pygame.KEYDOWN:
+            play_grav = -20 
     
 
     # move the snail by a predetermined amount
@@ -42,9 +51,11 @@ while True:
     if snal_rect.right <= 0:
         snal_rect.left = 800
 
-    # move the player by a predetermined amount
-    play_rect.left += 1
+    # Get player input
+    keys = pygame.key.get_pressed()
 
+    # if keys[pygame.K_SPACE]:
+    #     print('jump')
 
     # display the skybox surface on the screen surface
     screen.blit(sky_surf, (0, 0))
@@ -52,8 +63,14 @@ while True:
     # display the ground surface on the screen surface
     screen.blit(grnd_surf, (0, 300))
 
+
+    # increment player gravity
+    play_grav += 1
+    play_rect.bottom += play_grav
+
     # display the player on the screen surface
     screen.blit(play_surf, play_rect)
+
 
     # display the snail on the screen surface
     screen.blit(snal_surf, snal_rect)
@@ -66,7 +83,7 @@ while True:
     screen.blit(scor_surf, scor_rect)
 
     # if play_rect.colliderect(snal_rect):
-    #    pr
+    #    print('collision')
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
