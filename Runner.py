@@ -22,6 +22,7 @@ play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 snal_x_pos = 872
 
 # define a rectangle hitbox for the player
+play_rect = play_surf.get_rect(midbottom = (80, 300))
 
 # display an opening screen and change the fill of the test surface to red
 pygame.display.set_caption('Runner')
@@ -48,7 +49,7 @@ while True:
     screen.blit(grnd_surf, (0, 300))
 
     # display the player on the screen surface
-    screen.blit(play_surf, (80, 200))
+    screen.blit(play_surf, play_rect)
 
     # display the snail on the screen surface
     screen.blit(snal_surf, (snal_x_pos, 264))
