@@ -3,32 +3,46 @@
 import pygame
 from sys import exit
 
+
+# this function helps calculate the score of the player
+def disp_scor():
+    curr_time = int((pygame.time.get_ticks() - star_time) / 1000)
+    scor_surf = test_font.render(f'Score: {curr_time} s', False, (64, 64, 64))
+    scor_rect = scor_surf.get_rect(center = (400, 50))
+    screen.blit(scor_surf, scor_rect)
+
+    return curr_time
+
+
 # initialize the pygame system to allow me to run and display the game
 pygame.init()
 
 # Set the name of the window
 pygame.display.set_caption('Runner')
 
+
 # define some variables that will be used in the rest of the code including the screen, clock, and fonts
 screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
 test_font = pygame.font.Font('Font/PixelType.ttf', 50)
 game_actv = True
+star_time = 0
 
 # define some surfaces including the environment, actors, and score
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-scor_surf = test_font.render('My game', False, (64, 64, 64))
+# scor_surf = test_font.render('My game', False, (64, 64, 64))
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 
 # define a rectangle hitbox for the player, enemies, and menu items
 play_rect = play_surf.get_rect(midbottom = (80, 300))
 snal_rect = snal_surf.get_rect(bottomleft = (800, 300))
-scor_rect = scor_surf.get_rect(center = (400, 50))
+# scor_rect = scor_surf.get_rect(center = (400, 50))
 
 # define player attributes
 play_grav = 0
+
 
 # main game loop
 while True:
@@ -60,6 +74,7 @@ while True:
                 if event.key == pygame.K_SPACE:
                     game_actv = True
                     snal_rect.left = 800
+                    star_time = pygame.time.get_ticks()
 
     
     # The actual Game Logic
@@ -96,11 +111,12 @@ while True:
         screen.blit(snal_surf, snal_rect)
 
         # add a background to the score
-        pygame.draw.rect(screen, '#c0e8ec', scor_rect)
-        pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
+        # pygame.draw.rect(screen, '#c0e8ec', scor_rect)
+        # pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
 
         # display the score surface on the screen surface
-        screen.blit(scor_surf, scor_rect)
+        # screen.blit(scor_surf, scor_rect)
+        disp_scor()
 
 
         # Manage player collision with snails
