@@ -18,6 +18,8 @@ test_surf = pygame.Surface((100, 200))
 text_surf = test_font.render('My game', False, 'Black')
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/Snail1.png')
 
+snal_x_pos = 600
+
 # display an opening screen and change the fill of the test surface to red
 pygame.display.set_caption('Runner')
 test_surf.fill('Red')
@@ -31,6 +33,9 @@ while True:
             pygame.quit()
             exit()
     
+    # move the snail by a predetermined amount
+    snal_x_pos -= 4
+
     # display the skybox surface on the screen surface
     screen.blit(sky_surf, (0, 0))
 
@@ -41,7 +46,7 @@ while True:
     screen.blit(test_surf, (200, 100))
 
     # display the snail on the screen surface
-    screen.blit(snal_surf, (600, 275))
+    screen.blit(snal_surf, (snal_x_pos, 275))
 
     # display the text surface on the screen surface
     screen.blit(text_surf, (300, 50))
