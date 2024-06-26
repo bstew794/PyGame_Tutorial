@@ -38,19 +38,22 @@ while True:
             pygame.quit()
             exit()
         
+        # jump if the player is clicked on
         if event.type == pygame.MOUSEBUTTONDOWN:
             if play_rect.collidepoint(event.pos):
                 if play_rect.bottom >= 300:
                     play_grav = -20
 
+        # jump if any keyboard key is pressed
         if event.type == pygame.KEYDOWN:
             if play_rect.bottom >= 300:
                     play_grav = -20
     
 
-    # move the snail by a predetermined amount
+    # move the snail to the left by a predetermined amount
     snal_rect.left -= 4
 
+    # loops snail back to the right
     if snal_rect.right <= 0:
         snal_rect.left = 800
 
@@ -67,6 +70,8 @@ while True:
     # manage player gravity
     play_grav += 1
     play_rect.bottom += play_grav
+
+    # add ground collision
     if play_rect.bottom >= 300:
         play_rect.bottom = 300
         play_grav = 0 # original tutorial did not reset the gravity
@@ -85,8 +90,9 @@ while True:
     # display the score surface on the screen surface
     screen.blit(scor_surf, scor_rect)
 
-    # if play_rect.colliderect(snal_rect):
-    #    print('collision')
+    # Manage player collision with snails
+    if play_rect.colliderect(snal_rect):
+       print('collision')
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
