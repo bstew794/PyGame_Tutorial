@@ -39,10 +39,13 @@ while True:
             exit()
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            play_grav = -20
+            if play_rect.collidepoint(event.pos):
+                if play_rect.bottom >= 300:
+                    play_grav = -20
 
         if event.type == pygame.KEYDOWN:
-            play_grav = -20 
+            if play_rect.bottom >= 300:
+                    play_grav = -20
     
 
     # move the snail by a predetermined amount
@@ -54,9 +57,6 @@ while True:
     # Get player input
     keys = pygame.key.get_pressed()
 
-    # if keys[pygame.K_SPACE]:
-    #     print('jump')
-
     # display the skybox surface on the screen surface
     screen.blit(sky_surf, (0, 0))
 
@@ -64,9 +64,12 @@ while True:
     screen.blit(grnd_surf, (0, 300))
 
 
-    # increment player gravity
+    # manage player gravity
     play_grav += 1
     play_rect.bottom += play_grav
+    if play_rect.bottom >= 300:
+        play_rect.bottom = 300
+        play_grav = 0 # original tutorial did not reset the gravity
 
     # display the player on the screen surface
     screen.blit(play_surf, play_rect)
