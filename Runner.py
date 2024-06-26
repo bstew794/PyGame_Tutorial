@@ -10,9 +10,11 @@ def disp_scor():
     curr_time = int((pygame.time.get_ticks() - star_time) / 1000)
 
     # display formatted score string on screen surface
-    scor_surf = test_font.render(f'Score: {curr_time} s', False, (64, 64, 64))
+    scor_surf = pixe_font.render(f'Score: {curr_time} s', False, (64, 64, 64))
     scor_rect = scor_surf.get_rect(center = (400, 50))
     screen.blit(scor_surf, scor_rect)
+
+    return curr_time
 
 
 # initialize the pygame system to allow me to run and display the game
@@ -25,22 +27,27 @@ pygame.display.set_caption('Runner')
 # define some variables that will be used in the rest of the code including the screen, clock, and fonts
 screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
-test_font = pygame.font.Font('Font/PixelType.ttf', 50)
+pixe_font = pygame.font.Font('Font/PixelType.ttf', 50)
 game_actv = False
 star_time = 0
+score = 0
 
-# define some surfaces including the environment, and actors
+# define some surfaces including the environment, actors, and text
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 play_stan = pygame.image.load('Graphics/Player/stand.png').convert_alpha()
 play_stan = pygame.transform.rotozoom(play_stan, 0, 2)
+game_name = pixe_font.render('Pixel Runner', False, (111, 196, 169))
+game_mess = pixe_font.render('Press space to run', False, (111, 196, 169))
 
 # define a rectangle hitbox for the player, enemies, and menu items
 snal_rect = snal_surf.get_rect(bottomleft = (800, 300))
 play_rect = play_surf.get_rect(midbottom = (80, 300))
 stan_rect = play_stan.get_rect(center = (400, 200))
+name_rect = game_name.get_rect(center = (400, 80))
+mess_rect = game_mess.get_rect(center = (400, 330))
 
 # define player attributes
 play_grav = 0
@@ -71,11 +78,13 @@ while True:
                             play_grav = -20
         # player input during an inactive game state
         else:
-            # jump if any keyboard key is pressed
+            # reset the game state if the space key is pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_actv = True
                     snal_rect.left = 800
+                    play_rect.bottom = 300
+                    play_grav = 0
                     star_time = pygame.time.get_ticks()
 
     
@@ -117,7 +126,7 @@ while True:
         # pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
 
         # display the score surface on the screen surface
-        disp_scor()
+        score = disp_scor()
 
 
         # Manage player collision with snails
@@ -125,8 +134,24 @@ while True:
             game_actv = False
     # The menu logic
     else:
+        # show player character standing
         screen.fill((94, 129, 162))
         screen.blit(play_stan, stan_rect)
+
+
+        # define score message surface and rectangle
+        scor_mess = pixe_font.render(f'Your score: {score} s', False, (111, 196, 169))
+        scor_mess_rect = scor_mess.get_rect(center = (400, 330))
+
+
+        # show game name
+        screen.blit(game_name, name_rect)
+
+        # conditionally show the game or score message
+        if score == 0:
+            screen.blit(game_mess, mess_rect)
+        else:
+            screen.blit(scor_mess, scor_mess_rect)
 
     
     # update the visual aspects of the game for each loop
