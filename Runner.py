@@ -92,7 +92,8 @@ while True:
 
     # Manage player collision with snails
     if play_rect.colliderect(snal_rect):
-       print('collision')
+       pygame.quit()
+       exit()
 
     # update the visual aspects of the game for each loop
     pygame.display.update()
