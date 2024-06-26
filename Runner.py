@@ -6,12 +6,13 @@ from sys import exit
 
 # this function helps calculate the score of the player
 def disp_scor():
+    # calculate number of seconds spent alive
     curr_time = int((pygame.time.get_ticks() - star_time) / 1000)
+
+    # display formatted score string on screen surface
     scor_surf = test_font.render(f'Score: {curr_time} s', False, (64, 64, 64))
     scor_rect = scor_surf.get_rect(center = (400, 50))
     screen.blit(scor_surf, scor_rect)
-
-    return curr_time
 
 
 # initialize the pygame system to allow me to run and display the game
@@ -25,20 +26,21 @@ pygame.display.set_caption('Runner')
 screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
 test_font = pygame.font.Font('Font/PixelType.ttf', 50)
-game_actv = True
+game_actv = False
 star_time = 0
 
-# define some surfaces including the environment, actors, and score
+# define some surfaces including the environment, and actors
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-# scor_surf = test_font.render('My game', False, (64, 64, 64))
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
+play_stan = pygame.image.load('Graphics/Player/stand.png').convert_alpha()
+play_stan = pygame.transform.rotozoom(play_stan, 0, 2)
 
 # define a rectangle hitbox for the player, enemies, and menu items
-play_rect = play_surf.get_rect(midbottom = (80, 300))
 snal_rect = snal_surf.get_rect(bottomleft = (800, 300))
-# scor_rect = scor_surf.get_rect(center = (400, 50))
+play_rect = play_surf.get_rect(midbottom = (80, 300))
+stan_rect = play_stan.get_rect(center = (400, 200))
 
 # define player attributes
 play_grav = 0
@@ -54,7 +56,7 @@ while True:
             exit()
         
 
-        # Check for play input during an active game state
+        # player input during an active game state
         if game_actv:
             # jump if the player is clicked on
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -115,7 +117,6 @@ while True:
         # pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
 
         # display the score surface on the screen surface
-        # screen.blit(scor_surf, scor_rect)
         disp_scor()
 
 
@@ -124,7 +125,8 @@ while True:
             game_actv = False
     # The menu logic
     else:
-        screen.fill('Yellow')
+        screen.fill((94, 129, 162))
+        screen.blit(play_stan, stan_rect)
 
     
     # update the visual aspects of the game for each loop
