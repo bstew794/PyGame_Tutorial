@@ -47,11 +47,29 @@ def obst_move(obst_list):
 
 # This function checks for collision between the player and obstacles
 def chec_for_coll(play, obst_list):
+    # if the obstacle list is not empty then check if the player collided with any of them
     if obst_list:
         for obst_rect in obst_list:
             if play.colliderect(obst_rect):
                 return False
     return True
+
+
+# This function animates the player
+def play_anim():
+    global play_surf, play_walk_indx
+    
+    # Display jumping animation if player is off the floor
+    if play_rect.bottom < 300:
+        play_surf = play_jump
+    # Display walking animation if player is on the floor
+    else:
+        play_walk_indx += 0.1
+
+        if play_walk_indx >= len(play_walks):
+            play_walk_indx = 0
+        
+        play_surf = play_walks[int(play_walk_indx)]
 
 
 # Initialize the pygame system to allow me to run and display the game
@@ -74,11 +92,19 @@ sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
 snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
 fly_surf = pygame.image.load('Graphics/Enemies/Fly/fly1.png').convert_alpha()
-play_surf = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
+play_walk_1 = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
+play_walk_2 = pygame.image.load('Graphics/Player/walk2.png').convert_alpha()
+play_jump = pygame.image.load('Graphics/Player/jump.png').convert_alpha()
 play_stan = pygame.image.load('Graphics/Player/stand.png').convert_alpha()
 play_stan = pygame.transform.rotozoom(play_stan, 0, 2)
 game_name = pixe_font.render('Pixel Runner', False, (111, 196, 169))
 game_mess = pixe_font.render('Press space to run', False, (111, 196, 169))
+
+# Define player attributes
+play_grav = 0
+play_walks = [play_walk_1, play_walk_2]
+play_walk_indx = 0
+play_surf = play_walks[play_walk_indx]
 
 # Define a rectangle hitbox for the player, and menu items
 play_rect = play_surf.get_rect(midbottom = (80, 300))
@@ -89,12 +115,10 @@ mess_rect = game_mess.get_rect(center = (400, 330))
 # Define obstacles list
 obst_rects = []
 
-# Define player attributes
-play_grav = 0
-
 # Define timer variables
 obst_tmer = pygame.USEREVENT + 1
 pygame.time.set_timer(obst_tmer, 1400)
+
 
 # Main game loop
 while True:
@@ -136,6 +160,7 @@ while True:
                     obst_rects = []
                     play_rect.bottom = 300
                     play_grav = 0
+                    play_walk_indx = 0
                     star_time = pygame.time.get_ticks()
 
     
@@ -159,7 +184,10 @@ while True:
         # Add ground collision
         if play_rect.bottom >= 300:
             play_rect.bottom = 300
-            play_grav = 0 # original tutorial did not reset the gravity
+            play_grav = 0 # original tutorial did not reset the gravity when touching the ground
+
+        # Determine player surface to use
+        play_anim()
 
         # Display the player on the screen surface
         screen.blit(play_surf, play_rect)
