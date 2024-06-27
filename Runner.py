@@ -52,6 +52,9 @@ mess_rect = game_mess.get_rect(center = (400, 330))
 # define player attributes
 play_grav = 0
 
+# define timer variables
+obst_tmer = pygame.USEREVENT + 1
+pygame.time.set_timer(obst_tmer, 900)
 
 # main game loop
 while True:
@@ -76,6 +79,10 @@ while True:
                 if event.key == pygame.K_SPACE:
                     if play_rect.bottom >= 300:
                             play_grav = -20
+            
+            # timer logic
+            if event.type == obst_tmer:
+                print('test')
         # player input during an inactive game state
         else:
             # reset the game state if the space key is pressed
@@ -90,19 +97,26 @@ while True:
     
     # The actual Game Logic
     if game_actv:
-        # move the snail to the left by a predetermined amount
-        snal_rect.left -= 4   
-
-        # loops snail back to the right
-        if snal_rect.right <= 0:
-            snal_rect.left = 800
-
-
         # display the skybox surface on the screen surface
         screen.blit(sky_surf, (0, 0))
 
         # display the ground surface on the screen surface
         screen.blit(grnd_surf, (0, 300))
+
+
+        # # move the snail to the left by a predetermined amount
+        # snal_rect.left -= 4   
+
+        # # loops snail back to the right
+        # if snal_rect.right <= 0:
+        #     snal_rect.left = 800
+
+        # display the snail on the screen surface
+        # screen.blit(snal_surf, snal_rect)
+
+        
+        # display the score surface on the screen surface
+        score = disp_scor()
 
 
         # manage player gravity
@@ -116,17 +130,6 @@ while True:
 
         # display the player on the screen surface
         screen.blit(play_surf, play_rect)
-
-
-        # display the snail on the screen surface
-        screen.blit(snal_surf, snal_rect)
-
-        # add a background to the score
-        # pygame.draw.rect(screen, '#c0e8ec', scor_rect)
-        # pygame.draw.rect(screen, '#c0e8ec', scor_rect, 10)
-
-        # display the score surface on the screen surface
-        score = disp_scor()
 
 
         # Manage player collision with snails
