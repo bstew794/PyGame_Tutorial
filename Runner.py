@@ -90,8 +90,10 @@ score = 0
 # Define some surfaces including the environment, actors, and text
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-snal_surf = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
-fly_surf = pygame.image.load('Graphics/Enemies/Fly/fly1.png').convert_alpha()
+snal_slid_1 = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
+snal_slid_2 = pygame.image.load('Graphics/Enemies/Snail/snail2.png').convert_alpha()
+fly_sq_1 = pygame.image.load('Graphics/Enemies/Fly/fly1.png').convert_alpha()
+fly_sq_2 = pygame.image.load('Graphics/Enemies/Fly/fly2.png').convert_alpha()
 play_walk_1 = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
 play_walk_2 = pygame.image.load('Graphics/Player/walk2.png').convert_alpha()
 play_jump = pygame.image.load('Graphics/Player/jump.png').convert_alpha()
@@ -106,6 +108,14 @@ play_walks = [play_walk_1, play_walk_2]
 play_walk_indx = 0
 play_surf = play_walks[play_walk_indx]
 
+# Define obstacle attributes
+snal_slids = [snal_slid_1, snal_slid_2]
+snal_slid_indx = 0
+snal_surf = snal_slids[snal_slid_indx]
+fly_sqs = [fly_sq_1, fly_sq_2]
+fly_sq_indx = 0
+fly_surf = fly_sqs[fly_sq_indx]
+
 # Define a rectangle hitbox for the player, and menu items
 play_rect = play_surf.get_rect(midbottom = (80, 300))
 stan_rect = play_stan.get_rect(center = (400, 200))
@@ -118,7 +128,10 @@ obst_rects = []
 # Define timer variables
 obst_tmer = pygame.USEREVENT + 1
 pygame.time.set_timer(obst_tmer, 1400)
-
+snal_anim_tmer = pygame.USEREVENT + 2
+pygame.time.set_timer(snal_anim_tmer, 500)
+fly_anim_tmer = pygame.USEREVENT + 3
+pygame.time.set_timer(fly_anim_tmer, 200)
 
 # Main game loop
 while True:
@@ -144,13 +157,32 @@ while True:
                     if play_rect.bottom >= 300:
                             play_grav = -20
             
-            # Timer logic
+            # Obstacle addition timer logic
             if event.type == obst_tmer:
                 # Conditionally add a new enemy to the obstacle list
                 if randint(0,2):
                     obst_rects.append(snal_surf.get_rect(bottomleft = (randint(800, 1000), 300)))
                 else:
                     obst_rects.append(fly_surf.get_rect(bottomleft = (randint(800, 1000), 210)))
+            
+            # Snail animation timer logic
+            if event.type == snal_anim_tmer:
+                if snal_slid_indx == 0:
+                    snal_slid_indx = 1
+                else:
+                    snal_slid_indx = 0
+                
+                snal_surf = snal_slids[snal_slid_indx]
+            
+            # Fly animation timer logic
+            if event.type == fly_anim_tmer:
+                if fly_sq_indx == 0:
+                    fly_sq_indx = 1
+                else:
+                    fly_sq_indx = 0
+                
+                fly_surf = fly_sqs[fly_sq_indx]
+                
         # Player input during an inactive game state
         else:
             # Reset the game state if the space key is pressed
@@ -161,6 +193,8 @@ while True:
                     play_rect.bottom = 300
                     play_grav = 0
                     play_walk_indx = 0
+                    snal_slid_indx = 0
+                    fly_sq_indx = 0
                     star_time = pygame.time.get_ticks()
 
     
