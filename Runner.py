@@ -29,6 +29,10 @@ class Play(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = (80, 300))
         self.grav = 0
 
+        # Load in Jump SFX as a class variable
+        self.jump_sfx = pygame.mixer.Sound('Audio/jump.mp3')
+        self.jump_sfx.set_volume(0.25)
+
 
     # This function checks for user input
     def play_inpt(self):
@@ -42,6 +46,7 @@ class Play(pygame.sprite.Sprite):
             # Only allow the player to jump if they are touching the ground
             if self.rect.bottom >= 300:
                     self.grav = -20
+                    self.jump_sfx.play()
     
     # This function applies gravity to a player object
     def aply_grav(self):
@@ -168,6 +173,8 @@ pixe_font = pygame.font.Font('Font/PixelType.ttf', 50)
 game_actv = False
 star_time = 0
 score = 0
+bg_music = pygame.mixer.Sound('Audio/music.wav')
+bg_music.set_volume(0.0625)
 
 # Define sprite group for player
 play = pygame.sprite.GroupSingle()
@@ -192,6 +199,9 @@ mess_rect = game_mess.get_rect(center = (400, 330))
 # Define timer variables
 obst_tmer = pygame.USEREVENT + 1
 pygame.time.set_timer(obst_tmer, 1400)
+
+# Start playing background music
+bg_music.play(loops = -1)
 
 # Main game loop
 while True:
@@ -262,7 +272,7 @@ while True:
         # Define score message surface and rectangle
         scor_mess = pixe_font.render(f'Your score: {score} s', False, (111, 196, 169))
         scor_mess_rect = scor_mess.get_rect(center = (400, 330))
-        
+
         # Show game name
         screen.blit(game_name, name_rect)
 
