@@ -2,7 +2,133 @@
 # import necessary modules
 import pygame
 from sys import exit
-from random import randint
+from random import randint, choice
+
+
+# This class derives from a PyGame Sprite to provide surfaces and rectangles for the player
+class Play(pygame.sprite.Sprite):
+    # Initializer function that inherits from the parent class
+    def __init__(self):
+        # Super initializer
+        super().__init__()
+
+
+        # Load player walking images into surfaces and save to list with index
+        walk_1 = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
+        walk_2 = pygame.image.load('Graphics/Player/walk2.png').convert_alpha()
+        self.walk = [walk_1, walk_2]
+        self.walk_indx = 0
+
+        # Load player jumping image into a surface
+        self.jump = pygame.image.load('Graphics/Player/jump.png').convert_alpha()
+
+        # Set initial player image equal to idnex zero of the walking surface list
+        self.image = self.walk[self.walk_indx]
+
+        # Set initial player rectangle and gravity values
+        self.rect = self.image.get_rect(midbottom = (80, 300))
+        self.grav = 0
+
+
+    # This function checks for user input
+    def play_inpt(self):
+        # Get the keys pressed by teh user
+        keys = pygame.key.get_pressed()
+        mouse_buttons = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Make the player object "jump" after pressing the spacebar or clicking on teh player
+        if keys[pygame.K_SPACE] or (mouse_buttons and self.rect.collidepoint(mouse_pos)):
+            # Only allow the player to jump if they are touching the ground
+            if self.rect.bottom >= 300:
+                    self.grav = -20
+    
+    # This function applies gravity to a player object
+    def aply_grav(self):
+        # Increment gravity to simulate gravitaional acceleration
+        self.grav += 1
+        self.rect.bottom += self.grav
+
+        # Provide simulated collision with the ground to prevent infinite falling
+        if self.rect.bottom >= 300:
+            self.rect.bottom = 300
+            self.grav = 0 # original tutorial did not reset the gravity when touching the ground
+        
+    # This function animates a player object
+    def anm8(self):    
+        # Display jumping animation if the player object is off the floor
+        if self.rect.bottom < 300:
+            self.image = self.jump
+        # Display walking animation if the player object is on the floor
+        else:
+            self.walk_indx += 0.1
+
+            if self.walk_indx >= len(self.walk):
+                self.walk_indx = 0
+            
+            self.image = self.walk[int(self.walk_indx)]
+    
+    # This function updates a player object by calling class functions
+    def update(self):
+        self.play_inpt()
+        self.aply_grav()
+        self.anm8()
+
+# This class derives from a PyGame Sprite to provide surfaces and rectangles for the player
+class Obst(pygame.sprite.Sprite):
+    # Initializer function that inherits from the parent class with new field that contains enemy type
+    def __init__(self, type):
+        # Super initializer
+        super().__init__()
+
+        # save type for later
+        self.type = type
+
+
+        # Load fly images into surfaces and save to frames list
+        if self.type == 'fly':
+            fly_1 = pygame.image.load('Graphics/Enemies/Fly/fly1.png').convert_alpha()
+            fly_2 = pygame.image.load('Graphics/Enemies/Fly/fly2.png').convert_alpha()
+            self.frmes = [fly_1, fly_2]
+            y_pos = 210
+        # Load snail images into surfaces and save to frames list
+        else:
+            slid_1 = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
+            slid_2 = pygame.image.load('Graphics/Enemies/Snail/snail2.png').convert_alpha()
+            self.frmes = [slid_1, slid_2]
+            y_pos = 300
+
+        self.frme_index = 0
+
+        # Set initial obstacle surface and rectangle
+        self.image = self.frmes[self.frme_index]
+        self.rect = self.image.get_rect(bottomleft = (randint(800, 1000), y_pos))
+
+
+    # This function animates an obstacle object
+    def anm8(self):
+        # Set animation frequency dependent on enemy type
+        if self.type == 'fly': 
+            self.frme_index += 0.2
+        else: 
+            self.frme_index += 0.1
+        
+        # Display 1st or second enemy frame dependent on the index
+        if self.frme_index >= len(self.frmes):
+            self.frme_index = 0
+        
+        self.image = self.frmes[int(self.frme_index)]
+    
+    # This function removes obstacles that have moved offscreen from their parent sprite group
+    def destroy(self):
+        if self.rect.right < 0:
+            self.kill()
+
+    # This function updates an obstacle object by calling class fucntions
+    def update(self):
+        self.anm8()
+        self.rect.left -= 6
+        self.destroy()
 
 
 # This function helps calculate the score of the player
@@ -17,59 +143,15 @@ def disp_scor():
 
     return curr_time
 
+# This function checks for collision between the player and obstacles but with refreshing SPRITE
+def chec_for_coll_sprit():
+    # Use built-in sprite collision detection function
+    if pygame.sprite.spritecollide(play.sprite, obsts, False):
+        # Delete all obstacles if player dies
+        obsts.empty()
 
-# This function moves each obstacle in the provided list
-def obst_move(obst_list):
-    # Check if the obstacle lsit is empty
-    if obst_list:
-        # Iterate through the obstacle list
-        for obst_rect in obst_list:
-            # Move the obstacle by 5 pixels to the left
-            obst_rect.left -= 5
-
-            # Display a snail if the obastacle is touching the ground, and a fly otherwise
-            if obst_rect.bottom == 300:
-                screen.blit(snal_surf, obst_rect)
-            else:
-                screen.blit(fly_surf, obst_rect)
-
-
-        # Remove obstacles that are now offscreen
-        obst_list = [obst for obst in obst_list if obst.right >= 0]
-
-
-        # Return the obstacle list for overwriting
-        return obst_list
-    # Logic required if an empty list is passed into the function
-    else:
-        return []
-
-
-# This function checks for collision between the player and obstacles
-def chec_for_coll(play, obst_list):
-    # if the obstacle list is not empty then check if the player collided with any of them
-    if obst_list:
-        for obst_rect in obst_list:
-            if play.colliderect(obst_rect):
-                return False
+        return False
     return True
-
-
-# This function animates the player
-def play_anim():
-    global play_surf, play_walk_indx
-    
-    # Display jumping animation if player is off the floor
-    if play_rect.bottom < 300:
-        play_surf = play_jump
-    # Display walking animation if player is on the floor
-    else:
-        play_walk_indx += 0.1
-
-        if play_walk_indx >= len(play_walks):
-            play_walk_indx = 0
-        
-        play_surf = play_walks[int(play_walk_indx)]
 
 
 # Initialize the pygame system to allow me to run and display the game
@@ -87,51 +169,29 @@ game_actv = False
 star_time = 0
 score = 0
 
+# Define sprite group for player
+play = pygame.sprite.GroupSingle()
+play.add(Play())
+
+# Define sprite group for enemies
+obsts = pygame.sprite.Group()
+
 # Define some surfaces including the environment, actors, and text
 sky_surf = pygame.image.load('Graphics/Enviroment/sky.png').convert_alpha()
 grnd_surf = pygame.image.load('Graphics/Enviroment/ground.png').convert_alpha()
-snal_slid_1 = pygame.image.load('Graphics/Enemies/Snail/snail1.png').convert_alpha()
-snal_slid_2 = pygame.image.load('Graphics/Enemies/Snail/snail2.png').convert_alpha()
-fly_sq_1 = pygame.image.load('Graphics/Enemies/Fly/fly1.png').convert_alpha()
-fly_sq_2 = pygame.image.load('Graphics/Enemies/Fly/fly2.png').convert_alpha()
-play_walk_1 = pygame.image.load('Graphics/Player/walk1.png').convert_alpha()
-play_walk_2 = pygame.image.load('Graphics/Player/walk2.png').convert_alpha()
-play_jump = pygame.image.load('Graphics/Player/jump.png').convert_alpha()
 play_stan = pygame.image.load('Graphics/Player/stand.png').convert_alpha()
 play_stan = pygame.transform.rotozoom(play_stan, 0, 2)
 game_name = pixe_font.render('Pixel Runner', False, (111, 196, 169))
 game_mess = pixe_font.render('Press space to run', False, (111, 196, 169))
 
-# Define player attributes
-play_grav = 0
-play_walks = [play_walk_1, play_walk_2]
-play_walk_indx = 0
-play_surf = play_walks[play_walk_indx]
-
-# Define obstacle attributes
-snal_slids = [snal_slid_1, snal_slid_2]
-snal_slid_indx = 0
-snal_surf = snal_slids[snal_slid_indx]
-fly_sqs = [fly_sq_1, fly_sq_2]
-fly_sq_indx = 0
-fly_surf = fly_sqs[fly_sq_indx]
-
 # Define a rectangle hitbox for the player, and menu items
-play_rect = play_surf.get_rect(midbottom = (80, 300))
 stan_rect = play_stan.get_rect(center = (400, 200))
 name_rect = game_name.get_rect(center = (400, 80))
 mess_rect = game_mess.get_rect(center = (400, 330))
 
-# Define obstacles list
-obst_rects = []
-
 # Define timer variables
 obst_tmer = pygame.USEREVENT + 1
 pygame.time.set_timer(obst_tmer, 1400)
-snal_anim_tmer = pygame.USEREVENT + 2
-pygame.time.set_timer(snal_anim_tmer, 500)
-fly_anim_tmer = pygame.USEREVENT + 3
-pygame.time.set_timer(fly_anim_tmer, 200)
 
 # Main game loop
 while True:
@@ -143,45 +203,12 @@ while True:
             exit()
         
 
-        # Player input during an active game state
-        if game_actv:
-            # Jump if the player is clicked on
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if play_rect.collidepoint(event.pos):
-                    if play_rect.bottom >= 300:
-                        play_grav = -20
-
-            # Jump if space key is pressed
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if play_rect.bottom >= 300:
-                            play_grav = -20
-            
+        # Conditional statements while game state is active
+        if game_actv:            
             # Obstacle addition timer logic
             if event.type == obst_tmer:
                 # Conditionally add a new enemy to the obstacle list
-                if randint(0,2):
-                    obst_rects.append(snal_surf.get_rect(bottomleft = (randint(800, 1000), 300)))
-                else:
-                    obst_rects.append(fly_surf.get_rect(bottomleft = (randint(800, 1000), 210)))
-            
-            # Snail animation timer logic
-            if event.type == snal_anim_tmer:
-                if snal_slid_indx == 0:
-                    snal_slid_indx = 1
-                else:
-                    snal_slid_indx = 0
-                
-                snal_surf = snal_slids[snal_slid_indx]
-            
-            # Fly animation timer logic
-            if event.type == fly_anim_tmer:
-                if fly_sq_indx == 0:
-                    fly_sq_indx = 1
-                else:
-                    fly_sq_indx = 0
-                
-                fly_surf = fly_sqs[fly_sq_indx]
+                obsts.add(Obst(choice(['fly', 'snail', 'snail', 'snail'])))
                 
         # Player input during an inactive game state
         else:
@@ -189,16 +216,15 @@ while True:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_actv = True
-                    obst_rects = []
-                    play_rect.bottom = 300
-                    play_grav = 0
-                    play_walk_indx = 0
-                    snal_slid_indx = 0
-                    fly_sq_indx = 0
+
+                    play.sprite.rect.bottom = 300
+                    play.sprite.grav = 0
+                    play.sprite.walk_indx = 0
+
                     star_time = pygame.time.get_ticks()
 
     
-    # The actual Game Logic
+    # The active game state logic
     if game_actv:
         # Display the skybox surface on the screen surface
         screen.blit(sky_surf, (0, 0))
@@ -206,36 +232,29 @@ while True:
         # Display the ground surface on the screen surface
         screen.blit(grnd_surf, (0, 300))
 
-
         # Display the score surface on the screen surface
         score = disp_scor()
 
 
-        # Manage player gravity
-        play_grav += 1
-        play_rect.bottom += play_grav
+        # Draw a sprite of the Player object
+        play.draw(screen)
 
-        # Add ground collision
-        if play_rect.bottom >= 300:
-            play_rect.bottom = 300
-            play_grav = 0 # original tutorial did not reset the gravity when touching the ground
+        # Update the Player sprite object
+        play.update()
 
-        # Determine player surface to use
-        play_anim()
+        
+        # Draw the sprites from the enemy group
+        obsts.draw(screen)
 
-        # Display the player on the screen surface
-        screen.blit(play_surf, play_rect)
-
-
-        # Move the obstacles
-        obst_rects = obst_move(obst_rects)
+        # Update the enemy sprites
+        obsts.update()
 
 
         # Manage player collision with obstacles
-        game_actv = chec_for_coll(play_rect, obst_rects)
+        game_actv = chec_for_coll_sprit()
     # The menu logic
     else:
-        # Show player character standing
+        # Show player character standing on menu screen
         screen.fill((94, 129, 162))
         screen.blit(play_stan, stan_rect)
 
@@ -243,8 +262,7 @@ while True:
         # Define score message surface and rectangle
         scor_mess = pixe_font.render(f'Your score: {score} s', False, (111, 196, 169))
         scor_mess_rect = scor_mess.get_rect(center = (400, 330))
-
-
+        
         # Show game name
         screen.blit(game_name, name_rect)
 
