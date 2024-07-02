@@ -55,7 +55,7 @@ Hopefully you've kept your console terminal open. Otherwise, get a console windo
 
 Navigate to where you want to place my repository. Usually you can do so by typing 'cd' followed by the name of sub-directory you want to go to; don't forget to add spaces between the 'cd' command and the sub-directory name. If you're unsure of what directories you can currently travel to then you can type 'dir' to have a list of current sub-directories printed to the console window. Ypu can also use 'cd ..' to go up a directory. If you do not have a folder already created to hold the repository then you will need to make one. There are many ways to do this, but you can type 'mkdir' followed by the name you want to give the new directory/folder. Then use the 'cd' command to navigate to it.
 
-Next, use the command, 'git clone https://github.com/bstew794/PyGame_Tutorial' to downlaod a clone of the repository inside of the folder that you invoked the command in. You now have everything you need to play the game!
+Next, use the command, 'git clone https://github.com/bstew794/PyGame_Tutorial' to download a clone of the repository inside of the folder that you invoked the command in. You now have everything you need to play the game!
 
 ## Play Instructions
 Make sure to finish the installation instructions section before attempting to follow the steps of this section.
